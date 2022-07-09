@@ -9,13 +9,13 @@ import com.api.rest.springboot.webflux.util.ValidationConstants;
 import lombok.Data;
 
 @Data
-@Document(collection = "enterprise_client")
-public class EnterpriseClient extends Client{
+@Document(collection = "client")
+public class PersonalClient extends Client{
   
   @NotEmpty(message = ValidationConstants.NOT_EMPTY)
-  private String ruc;
+  private String lastName;
   
   @NotEmpty(message = ValidationConstants.NOT_EMPTY)
-  private String enterpriseType;
+  private String documentNumber;
 
 }
