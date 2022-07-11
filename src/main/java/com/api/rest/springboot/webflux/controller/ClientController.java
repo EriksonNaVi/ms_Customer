@@ -66,8 +66,8 @@ public class ClientController {
     return clientService.findById(id).flatMap(c -> {
       c.setName(client.getName());
       c.setDocumentType(client.getDocumentType());
-      //c.setDocumentNumber(client.getDocumentNumber());
-      //c.setClientType(client.getClientType());
+      c.setDocumentNumber(client.getDocumentNumber());
+      c.setClientType(client.getClientType());
       c.setEmail(client.getEmail());
       c.setAddress(client.getAddress());
       c.setPhone(client.getPhone());
