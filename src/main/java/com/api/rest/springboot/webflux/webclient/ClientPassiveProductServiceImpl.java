@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.api.rest.springboot.webflux.exceptions.AccountNotFoundException;
-import com.api.rest.springboot.webflux.model.PassiveProduct;
+import com.api.rest.springboot.webflux.webclient.dto.PassiveProduct;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

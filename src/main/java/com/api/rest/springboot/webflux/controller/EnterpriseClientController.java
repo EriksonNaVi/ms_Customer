@@ -1,13 +1,6 @@
 package com.api.rest.springboot.webflux.controller;
 
-import java.net.URI;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.rest.springboot.webflux.model.EnterpriseClient;
-import com.api.rest.springboot.webflux.service.EnterpriseClientService;
+import com.api.rest.springboot.webflux.dto.EnterpriseClientDto;
+import com.api.rest.springboot.webflux.resource.EnterpriseClientResource;
+import com.api.rest.springboot.webflux.webclient.dto.ActiveProduct;
+import com.api.rest.springboot.webflux.webclient.dto.PassiveProduct;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,47 +23,42 @@ import reactor.core.publisher.Mono;
 public class EnterpriseClientController {
   
   @Autowired
-  private EnterpriseClientService enterpriseClientService;
+  private EnterpriseClientResource enterpriseClientResource;
   
   @GetMapping
-  public Flux<EnterpriseClient> toList(){
-      return enterpriseClientService.findAll();
+  public Flux<EnterpriseClientDto> findAll(){
+      return enterpriseClientResource.findAll();
   }
   
   @PostMapping
-  public Mono<EnterpriseClient> register(@Valid @RequestBody EnterpriseClient enterpriseClient){
-      return enterpriseClientService.save(enterpriseClient);
+  public Mono<EnterpriseClientDto> register(@RequestBody EnterpriseClientDto enterpriseClientDto){
+      return enterpriseClientResource.create(enterpriseClientDto);
   }
   
   @GetMapping("/{id}")
-  public Mono<ResponseEntity<EnterpriseClient>> listById(@PathVariable String id){
-    return enterpriseClientService.findById(id).map(c -> ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .body(c))
-        .defaultIfEmpty(ResponseEntity.notFound().build());
+  public Mono<EnterpriseClientDto> listById(@PathVariable String id){
+    return enterpriseClientResource.findById(id);
   }
   
   @PutMapping("/{id}")
-  public Mono<ResponseEntity<EnterpriseClient>> edit(@RequestBody EnterpriseClient enterpriseClient, @PathVariable String id) {
-    return enterpriseClientService.findById(id).flatMap(c -> {
-      c.setName(enterpriseClient.getName());
-      c.setDocumentType(enterpriseClient.getDocumentType());
-      c.setRuc(enterpriseClient.getRuc());
-      c.setEnterpriseType(enterpriseClient.getEnterpriseType());
-      c.setEmail(enterpriseClient.getEmail());
-      c.setAddress(enterpriseClient.getAddress());
-      c.setPhone(enterpriseClient.getPhone());
-
-      return enterpriseClientService.save(c);
-    }).map(c -> ResponseEntity.created(URI.create("/api/client/enterprise".concat(c.getId())))
-        .contentType(MediaType.APPLICATION_JSON_UTF8).body(c)).defaultIfEmpty(ResponseEntity.notFound().build());
+  public Mono<EnterpriseClientDto> update(@RequestBody EnterpriseClientDto enterpriseClientDto, @PathVariable String id){
+      return enterpriseClientResource.update(enterpriseClientDto, id);
   }
   
   @DeleteMapping("/{id}")
-  public Mono<ResponseEntity<Void>> remove(@PathVariable String id){
-    return enterpriseClientService.findById(id).flatMap(c ->{
-      return enterpriseClientService.delete(c).then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
-    }).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+  public Mono<Void> remove(@PathVariable String id){
+    return enterpriseClientResource.delete(id);
+  }
+  
+  //Se agrego para WebConfig
+  @GetMapping("/enterpriseActives/{idClient}")
+  public Flux<ActiveProduct> getCreditCards(@PathVariable("idClient") String idClient){
+    return enterpriseClientResource.getCreditCards(idClient);
+  }
+  
+  @GetMapping("/enterprisePassives/{idClient}")
+  public Flux<PassiveProduct> getNumberAccounts(@PathVariable("idClient") String idClient){
+    return enterpriseClientResource.getNumberAccounts(idClient);
   }
 
 }

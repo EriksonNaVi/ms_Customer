@@ -1,6 +1,6 @@
 package com.api.rest.springboot.webflux.webclient;
 
-import com.api.rest.springboot.webflux.model.ActiveProduct;
+import com.api.rest.springboot.webflux.webclient.dto.ActiveProduct;
 
 import reactor.core.publisher.Flux;
 
